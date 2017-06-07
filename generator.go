@@ -343,6 +343,7 @@ func (g *generator) sendSignalToContainer(config Config) {
 
 func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 	apiInfo, err := g.Client.Info()
+	hostEnv := collectEnv()
 	if err != nil {
 		log.Printf("Error retrieving docker server info: %s\n", err)
 	} else {
@@ -381,6 +382,7 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 			Gateway:      container.NetworkSettings.Gateway,
 			Addresses:    []Address{},
 			Networks:     []Network{},
+			HostEnv:	  hostEnv,
 			Env:          make(map[string]string),
 			Volumes:      make(map[string]Volume),
 			Node:         SwarmNode{},
@@ -454,7 +456,18 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 	return containers, nil
 
 }
-
+func collectEnv() map[string]string {
+	envMap := make(map[string]string)
+	envStrs := os.Environ()
+	for _, envStr := range envStrs {
+		spl := strings.SplitN(envStr, "=", 2)
+		if len(spl) != 2 {
+			continue
+		}
+		envMap[spl[0]] = spl[1]
+	}
+	return envMap
+}
 func newSignalChannel() <-chan os.Signal {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
