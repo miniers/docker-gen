@@ -53,7 +53,6 @@ func NewGenerator(gc GeneratorConfig) (*generator, error) {
 	if err != nil {
 		log.Printf("Error retrieving docker server version info: %s\n", err)
 	}
-
 	// Grab the docker daemon info once and hold onto it
 	SetDockerEnv(apiVersion)
 
@@ -343,7 +342,6 @@ func (g *generator) sendSignalToContainer(config Config) {
 
 func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 	apiInfo, err := g.Client.Info()
-	hostEnv := collectEnv()
 	if err != nil {
 		log.Printf("Error retrieving docker server info: %s\n", err)
 	} else {
@@ -450,7 +448,7 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 		}
 
 		runtimeContainer.Env = splitKeyValueSlice(container.Config.Env)
-		runtimeContainer.HostEnv = hostEnv
+		runtimeContainer.HostEnv = collectEnv()
 		runtimeContainer.Labels = container.Config.Labels
 		containers = append(containers, runtimeContainer)
 	}
@@ -459,8 +457,7 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 }
 func collectEnv() map[string]string {
 	envMap := make(map[string]string)
-	envStrs := os.Environ()
-	for _, envStr := range envStrs {
+	for _, envStr := range os.Environ() {
 		spl := strings.SplitN(envStr, "=", 2)
 		if len(spl) != 2 {
 			continue
