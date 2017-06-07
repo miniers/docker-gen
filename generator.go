@@ -382,8 +382,8 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 			Gateway:      container.NetworkSettings.Gateway,
 			Addresses:    []Address{},
 			Networks:     []Network{},
-			HostEnv:	  hostEnv,
 			Env:          make(map[string]string),
+			HostEnv:      make(map[string]string),
 			Volumes:      make(map[string]Volume),
 			Node:         SwarmNode{},
 			Labels:       make(map[string]string),
@@ -450,6 +450,7 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 		}
 
 		runtimeContainer.Env = splitKeyValueSlice(container.Config.Env)
+		runtimeContainer.HostEnv = hostEnv
 		runtimeContainer.Labels = container.Config.Labels
 		containers = append(containers, runtimeContainer)
 	}

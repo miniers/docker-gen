@@ -90,6 +90,7 @@ type RuntimeContainer struct {
 	Hostname     string
 	Image        DockerImage
 	Env          map[string]string
+	HostEnv      map[string]string
 	Volumes      map[string]Volume
 	Node         SwarmNode
 	Labels       map[string]string
