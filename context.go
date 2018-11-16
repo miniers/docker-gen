@@ -135,6 +135,7 @@ func (i *DockerImage) String() string {
 type SwarmNode struct {
 	ID      string
 	Name    string
+	Labels  map[string]string
 	Address Address
 }
 

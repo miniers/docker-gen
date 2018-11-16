@@ -431,6 +431,7 @@ func (g *generator) getContainers() ([]*RuntimeContainer, error) {
 		if container.Node != nil {
 			runtimeContainer.Node.ID = container.Node.ID
 			runtimeContainer.Node.Name = container.Node.Name
+			runtimeContainer.Node.Labels = container.Node.Labels
 			runtimeContainer.Node.Address = Address{
 				IP: container.Node.IP,
 			}
